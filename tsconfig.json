@@ -1,0 +1,29 @@
+{
+  "compilerOptions": {
+    "baseUrl": "src",
+    "target": "es5",
+    "module": "es2015",
+    "moduleResolution": "node",
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "sourceMap": true,
+    "declaration": false,
+    "lib": [
+      "es2015",
+      "es5",
+      "dom"
+    ]
+  },
+  "files": [
+    "index.ts",
+    "./src/flew.decorators.ts",
+    "./src/flew.default-types.ts",
+    "./src/flew.mixin.ts",
+    "./src/flew.util.ts",
+    "./src/flew.error.ts"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist/"
+  ]
+}
