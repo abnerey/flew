@@ -1,5 +1,5 @@
 {
-  "name": "flew",
+  "name": "flew-handler",
   "version": "0.1.0",
   "description": "Flow Error Awareness library",
   "main": "./dist/index.js",

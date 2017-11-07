@@ -1,2 +1,2 @@
-# flew
-FLEW: Flow Error AWareness library for Angular 2+
+# FLEW
+Flow Error Awareness library for Angular 2+
