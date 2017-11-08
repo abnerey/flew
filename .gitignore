@@ -1,36 +1,46 @@
-# See http://help.github.com/ignore-files/ for more about ignoring files.
-# compiled output
-/dist
-/tmp
-/out-tsc
-# dependencies
-/node_modules
-# IDEs and editors
-/.idea
-.project
-.classpath
-.c9/
-*.launch
-.settings/
-*.sublime-workspace
-# IDE - VSCode
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-# misc
-/.sass-cache
-/connect.lock
-/coverage
-/libpeerconnection.log
+#################
+## Misc
+#################
+**/.DS_Store
+nbproject
+manifest.mf
+build.xml
+node_modules/*
+dist/
 npm-debug.log
-package-lock.json
-testem.log
-/typings
-# e2e
-/e2e/*.js
-/e2e/*.map
-# System Files
-.DS_Store
+*.js
+!config/*
+!karma.conf.js
+!webpack.config.js
+*.map
+*.d.ts
+!make.js
+!examples/**/*.js
+coverage
+*.metadata.json
+bundles
+bundles
+
+#################
+## JetBrains
+#################
+.idea
+.project
+.settings
+
+############
+## Windows
+############
+
+# Windows image file caches
 Thumbs.db
+
+# Folder config file
+Desktop.ini
+
+############
+## Mac
+############
+
+# Mac crap
+.DS_Store
