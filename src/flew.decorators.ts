@@ -3,7 +3,6 @@ import {FlewMessage} from "./flew.error";
 import {execute} from "./flew.util";
 import {Type} from "./flew.default-types";
 import {FlewModule} from "../index";
-import "reflect-metadata";
 
 export function FlewException(value: Type) {
     return function (target, key, descriptor) {
@@ -51,7 +50,7 @@ export function FlewPromise(type: Type, clazz = null) {
 /*
     Note: An async function always returns a promise in result
  */
-type Definition = {success?: any, transformSuccess?: any, transformError?: any}
+export type Definition = {success?: any, transformSuccess?: any, transformError?: any}
 
 export function FlewHandler(definition: Definition = {}) {
     let {success: decoratorSuccess, transformSuccess, transformError} = definition;
@@ -116,12 +115,15 @@ function notify(type: string, titleMessage: string, bodyMessage: string, transla
 * Note: Generic/Abstract decorators
 *
 * */
+/*
+* Spring Autowired like decorator; deprecated because need the polyfill reflect-metadata and that was removed from Angular5
 export function Autowired(target: any, key: string) {
     Object.defineProperty(target, key, {
         configurable: false,
         get: () => FlewModule.getInjector(Reflect.getMetadata("design:type", target, key))
     });
 }
+*/
 
 export function Mixes(mixins: Function[]) {
     return function (constructor: Function) {
@@ -140,36 +142,3 @@ export function Mixes(mixins: Function[]) {
         });
     };
 }
-
-/*function instanceOfErrorSafety(object: any): object is ErrorSafety {
-    return ('notify' in object);
-}*/
-
-/*
-function instanceOfErrorSafety(object: any): object is ErrorSafety {
-    return ('notify' in object && 'busy' in object);
-}*/
-
-
-/*export function Notifier() {
-    return Autowired(NotificationsService);
-}*/
-
-/*export function Translator() {
-    return Autowired(TranslateService);
-}*/
-
-/*export function Autowired(dependency: any) {
-    return function(target: any, key: string) {
-        console.log("key: "+key);
-        Reflect.defineMetadata("design:hola", 'hola', target);
-        //console.log(Reflect.hasOwnMetadata(key, target, key));
-        //console.log(Reflect.getOwnMetadataKeys(target, key));
-        console.log(Reflect.getMetadata("design:type", target, key) === dependency);
-        console.log(Reflect.getMetadata("design:hola", target, key));
-        Object.defineProperty(target, key, {
-           configurable: false,
-           get: () => FlewModule.get(dependency)
-        });
-    }
-}*/
