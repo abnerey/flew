@@ -18,21 +18,26 @@ The first step is import the FlewModule in your Angular's main module, commonly 
 
 ```ts
 @NgModule({
-	declarations: [...],
-	imports: [
-		...,
-		FlewModule.forRoot({
-			notifier: NotificationService, 			 // Dependency class we'll use to notify (Required)
-			translate: TranslateService, 			 // Dependency class we'll use to translate (Required in case you need translate notifications content)
-			transformError: yourFunctionOnError, 	 // Pure function that will transform error messages
-			transformSuccess: yourFunctionOnSuccess, // Pure function that will transform success messages
-			success: {} 							 // Default success message
-		}),
-		...
-	],
-	providers: [...],
-	bootstrap: [...],
-	exports: [...]
+  declarations: [...],
+  imports: [
+	...,
+	FlewModule.forRoot({
+	  notifier: NotificationService, 			 
+	    // Dependency class we'll use to notify (Required)
+	  translate: TranslateService, 			 
+	    // Dependency class we'll use to translate
+	  transformError: yourFunctionOnError, 	 
+	    // Pure function that will transform error messages
+      transformSuccess: yourFunctionOnSuccess, 
+        // Pure function that will transform success messages
+	  success: {} 							 
+	    // Default success message
+	}),
+	...
+  ],
+  providers: [...],
+  bootstrap: [...],
+  exports: [...]
 })
 export class AppModule {
 }
