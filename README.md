@@ -28,7 +28,7 @@ The first step is import the FlewModule in your Angular's main module, commonly 
 	    // Dependency class we'll use to translate
 	  transformError: yourFunctionOnError, 	 
 	    // Pure function that will transform error messages
-      transformSuccess: yourFunctionOnSuccess, 
+	  transformSuccess: yourFunctionOnSuccess, 
         // Pure function that will transform success messages
 	  success: {} 							 
 	    // Default success message
