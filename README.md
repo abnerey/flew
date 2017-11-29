@@ -29,7 +29,7 @@ The first step is import the FlewModule in your Angular's main module, commonly 
 	  transformError: yourFunctionOnError, 	 
 	    // Pure function that will transform error messages
 	  transformSuccess: yourFunctionOnSuccess, 
-        // Pure function that will transform success messages
+	    // Pure function that will transform success messages
 	  success: {} 							 
 	    // Default success message
 	}),
