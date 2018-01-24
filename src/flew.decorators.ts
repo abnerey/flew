@@ -1,8 +1,9 @@
-import {BusyMixin} from "./flew.mixin";
+import {BusyMixin, PrefixMixin} from './flew.mixin';
 import {FlewMessage} from "./flew.error";
 import {execute} from "./flew.util";
 import {Type} from "./flew.default-types";
 import {FlewModule} from "../index";
+import {ComponentDefinition, Definition, Mixin} from './flew.types';
 
 export function FlewException(value: Type) {
     return function (target, key, descriptor) {
@@ -13,60 +14,68 @@ export function FlewException(value: Type) {
             try {
                 return originalMethod.apply(this, args);
             } catch (error) {
-                if(error instanceof FlewMessage) {
-                    notify('error', error.header, error.body, error.translatable)
+                if (fakeInstanceOf(error)) {
+                    notify('error', error.body, error.header, error.translatable, this['prefix']);
                 }
-                console.log('An error happens');
+                console.log('===> FLEW EXCEPTION: ');
                 console.log(error);
             }
             return value;
         };
 
         return descriptor;
+    };
+}
+
+export function FlewComponent(definition: ComponentDefinition = {}) {
+    const {prefix, busy = true} = definition;
+    const toMix: Mixin[] = [];
+    if (busy) {
+        toMix.push({mixin: BusyMixin} as Mixin);
     }
+    if (prefix) {
+        toMix.push({mixin: PrefixMixin, value: {prefix}} as Mixin);
+    }
+    return Mixes(toMix);
 }
 
-export function FlewComponent() {
-    return Mixes([BusyMixin]);
-}
-
-export function FlewPromise(type: Type, clazz = null) {
+export function FlewPromise(type?: Type, payload: any = null) {
     return function (target, key, descriptor) {
         descriptor = descriptor || Object.getOwnPropertyDescriptor(target, key);
         const {value: originalMethod} = descriptor;
 
-        descriptor.value = function (...args: any[]) {
+        descriptor.value = function(...args: any[]) {
             let defaultValue = type;
-            if(type === Type.CLASS) {
-                defaultValue = new clazz()
+            if (type === Type.CLASS) {
+                defaultValue = new payload();
+            } else if (type === Type.CUSTOM) {
+                defaultValue = payload;
             }
             return execute(originalMethod.apply(this, args), defaultValue);
         };
 
         return descriptor;
-    }
+    };
 }
 
-/*
-    Note: An async function always returns a promise in result
- */
-export type Definition = {success?: any, transformSuccess?: any, transformError?: any}
-
 export function FlewHandler(definition: Definition = {}) {
-    let {success: decoratorSuccess, transformSuccess, transformError} = definition;
+    const {success: decoratorSuccess, transformSuccess, transformError, handleError} = definition;
     return function (target, key, descriptor) {
         descriptor = descriptor || Object.getOwnPropertyDescriptor(target, key);
         const {value: originalMethod} = descriptor;
 
         descriptor.value = function (...args: any[]) {
             const promiseResult = originalMethod.apply(this, args)
-                .then(() => {
+                .then((result) => {
                     try {
-                        let success = decoratorSuccess || FlewModule.success;
+                        let success = decoratorSuccess || FlewModule.success || result;
+
                         if (success) {
-                            let transformer = transformSuccess || FlewModule.transformSuccess;
-                            success = (transformer ? transformer(success) : success) as FlewMessage;
-                            notify('info', success.header, success.body, success.translatable);
+                            success.header = success.congruent || success.header;
+                            success.body = success.congruent || success.body;
+                            const transformer = transformSuccess || FlewModule.transformSuccess;
+                            success = (transformer && !fakeInstanceOf(success) ? transformer(success) : success) as FlewMessage;
+                            notify('info', success.header, success.body, success.translatable, (success.congruent && this['prefix']));
                         }
                     } catch (err) {
                         console.log('Unable to notify on success, review success message and transformers.');
@@ -74,32 +83,35 @@ export function FlewHandler(definition: Definition = {}) {
                     }
                 })
                 .catch(error => {
-                    try {
-                        let transformer = transformError || FlewModule.transformError;
-                        error = (transformer ? transformer(error) : error) as FlewMessage;
-                        if (error && error.body) {
-                            notify('error', error.header, error.body, error.translatable);
-                            console.log(error);
-                        } else {
-                            console.log('Error doesn\'t has the correct definition');
+                    if (handleError) {
+                        handleError.apply(this, error);
+                    } else {
+                        try {
+                            const transformer = transformError || FlewModule.transformError;
+                            error = (transformer && !fakeInstanceOf(error) ? transformer(error) : error) as FlewMessage;
+                            if (error && error.body) {
+                                notify('error', error.header, error.body, error.translatable, (error.congruent && this['prefix']));
+                            } else {
+                                console.log('Error hasn\'t the correct definition.');
+                                console.log(error);
+                            }
+                        } catch (innError) {
+                            console.log('Unable to notify, check Notifier and Translator Decorators.');
                         }
-                    } catch(innError) {
-                        console.log('Unable to notify, check Notifier and Translator Decorators');
-                        console.log(innError);
                     }
                 });
-            if (this.busy === null) {
-                this.busy = promiseResult;
-            }
+            this['busy'] = promiseResult;
             return promiseResult;
         };
 
         return descriptor;
-    }
+    };
 }
 
-function notify(type: string, titleMessage: string, bodyMessage: string, translate = true) {
+function notify(type: string, titleMessage: string, bodyMessage: string, translate = true, prefix?: string) {
     if (translate) {
+        titleMessage = prefix ? `${prefix}.header.${titleMessage}` : titleMessage;
+        bodyMessage = prefix ? `${prefix}.body.${bodyMessage}` : bodyMessage;
         FlewModule.translate.get(titleMessage).subscribe(title => {
             FlewModule.translate.get(bodyMessage).subscribe(value => {
                 FlewModule.notifier[type](title, value);
@@ -110,26 +122,27 @@ function notify(type: string, titleMessage: string, bodyMessage: string, transla
     }
 }
 
+function fakeInstanceOf(error): boolean {
+    return error && (error.hasOwnProperty('header') && error.hasOwnProperty('body') && error.hasOwnProperty('translatable') || error.hasOwnProperty('congruent'));
+}
+
 /*
 *
 * Note: Generic/Abstract decorators
 *
 * */
-/*
-* Spring Autowired like decorator; deprecated because need the polyfill reflect-metadata and that was removed from Angular5
-export function Autowired(target: any, key: string) {
-    Object.defineProperty(target, key, {
-        configurable: false,
-        get: () => FlewModule.getInjector(Reflect.getMetadata("design:type", target, key))
-    });
-}
-*/
-
-export function Mixes(mixins: Function[]) {
-    return function (constructor: Function) {
-        mixins.forEach((mixin) => {
+export function Mixes(mixins: Mixin[]) {
+    return function (constructor) {
+        mixins.forEach(({mixin, value}) => {
             const fieldCollector = {};
             mixin.apply(fieldCollector);
+            if (value) {
+                for (const val in fieldCollector) {
+                    if (fieldCollector.hasOwnProperty(val)) {
+                        fieldCollector[val] = value[val];
+                    }
+                }
+            }
             Object.getOwnPropertyNames(fieldCollector).forEach((name) => {
                 constructor.prototype[name] = fieldCollector[name];
             });

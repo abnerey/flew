@@ -1,5 +1,5 @@
 export class FlewDefinitionService {
-    notifier?: any;
+    notifier: any;
     translate?: any;
     transformError?: any;
     transformSuccess?: any;
