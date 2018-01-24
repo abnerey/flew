@@ -2,7 +2,7 @@
 
 ## Flow Error Awareness library for Angular 2+
 
-This is a library for manage the flow control of errors/exceptions in an Angular2+ application, especially for async/await functions, reducing the extense boilerplate of try/catch that this kind of functions may need; BTW, also help you with normal functions exception handling. FLEW Handler provide you the next capabilities through custom top level decorators, keeping the AngularLike syntax we already love:
+This library is to manage the flow control of errors/exceptions in an Angular2+ application, especially for async/await functions, reducing the extense boilerplate of try/catch that this kind of functions may need; BTW, also help you with normal functions exception handling. FLEW Handler provide you the next capabilities through custom top level decorators, keeping the AngularLike syntax we already love:
 
 * **Notification:** FLEW decorators for exception handling let you notify in success and error case. You can create notifications for the entire application, using that success/error notification for every case; also you can declare success/error notifications for a single case in each function (for normal functions only error notifications).
 * **Translation:** FLEW notifications have the ability to be translated, you decide when do it or not, through FLEW message object/model.
@@ -18,21 +18,26 @@ The first step is import the FlewModule in your Angular's main module, commonly 
 
 ```ts
 @NgModule({
-	declarations: [...],
-	imports: [
-		...,
-		FlewModule.forRoot({
-			notifier: NotificationService, 			 // Dependency class we'll use to notify (Required)
-			translate: TranslateService, 			 // Dependency class we'll use to translate (Required in case you need translate notifications content)
-			transformError: yourFunctionOnError, 	 // Pure function that will transform error messages
-			transformSuccess: yourFunctionOnSuccess, // Pure function that will transform success messages
-			success: {} 							 // Default success message
-		}),
-		...
-	],
-	providers: [...],
-	bootstrap: [...],
-	exports: [...]
+  declarations: [...],
+  imports: [
+	...,
+	FlewModule.forRoot({
+	  notifier: NotificationService, 			 
+	    // Dependency class we'll use to notify (Required)
+	  translate: TranslateService, 			 
+	    // Dependency class we'll use to translate
+	  transformError: yourFunctionOnError, 	 
+	    // Pure function that will transform error messages
+	  transformSuccess: yourFunctionOnSuccess, 
+	    // Pure function that will transform success messages
+	  success: {} 							 
+	    // Default success message
+	}),
+	...
+  ],
+  providers: [...],
+  bootstrap: [...],
+  exports: [...]
 })
 export class AppModule {
 }
