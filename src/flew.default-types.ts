@@ -4,5 +4,6 @@ export enum Type {
     BOOLEAN = <any>false,
     NULL = <any>null,
     ARRAY = <any>[],
-    CLASS = <any>true
+    CLASS = <any>true,
+    CUSTOM = <any>1
 }
