@@ -6,6 +6,8 @@
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
     "declaration": true,
+    "stripInternal": true,
+    "skipLibCheck": true,
     "lib": [
       "es2015",
       "es5",
@@ -18,7 +20,8 @@
     "./src/flew.default-types.ts",
     "./src/flew.mixin.ts",
     "./src/flew.util.ts",
-    "./src/flew.error.ts"
+    "./src/flew.error.ts",
+    "./src/flew.module.ts"
   ],
   "exclude": [
     "node_modules",
