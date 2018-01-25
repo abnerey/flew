@@ -1,12 +1,15 @@
 {
   "name": "flew-handler",
-  "version": "0.3.0",
+  "version": "1.0.0",
   "description": "Flow Error Awareness library",
+  "private": false,
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",
+  "publishConfig": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "prepare": "tsc"
+    "prepare": "tsc",
+    "build": "ng-packagr -p ng-package.json"
   },
   "repository": {
     "type": "git",
@@ -41,16 +44,19 @@
   },
   "homepage": "https://github.com/abnerey/flew#readme",
   "peerDependencies": {
-    "@angular/core": ">=4.0.0"
+    "@angular/core": "~4.0.0"
   },
   "devDependencies": {
+    "@angular/cli": "^1.6.5",
     "@angular/common": "~4.0.0",
     "@angular/core": "~4.0.0",
     "@angular/compiler": "~4.0.0",
+    "@angular/compiler-cli": "^4.0.0",
     "tslint": "5.3.2",
     "typescript": "~2.2.0",
     "codelyzer": "~2.0.0",
     "reflect-metadata": "^0.1.10",
-    "rxjs": "5.4.2"
+    "rxjs": "5.4.2",
+    "ng-packagr": "^1.6.0"
   }
 }

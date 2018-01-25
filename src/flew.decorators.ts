@@ -2,10 +2,10 @@ import {BusyMixin, PrefixMixin} from './flew.mixin';
 import {FlewMessage} from "./flew.error";
 import {execute} from "./flew.util";
 import {Type} from "./flew.default-types";
-import {FlewModule} from "../index";
+import {FlewModule} from "./flew.module";
 import {ComponentDefinition, Definition, Mixin} from './flew.types';
 
-export function FlewException(value: Type) {
+export function FlewException(value: Type = Type.NULL) {
     return function (target, key, descriptor) {
         descriptor = descriptor || Object.getOwnPropertyDescriptor(target, key);
         const {value: originalMethod} = descriptor;
